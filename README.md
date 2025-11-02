@@ -52,4 +52,80 @@ It dynamically remaps the visible address to a different one, while keeping all 
 ---
 
 ## 🧠 FSM Flow (Simplified)
+   +-------+
+   | IDLE  |
+   +-------+
+        |
+    (Start)
+        v
+   +-------+
+   | ADDR  |
+   +-------+
+        |
+    (7 bits)
+        v
+   +-------+
+   | CHECK |
+   +-------+
+    /       \
+
+---
+
+## 🧾 Address Translation
+
+| Parameter | Description | Example |
+|------------|-------------|----------|
+| `VISIBLE_ADDR` | The address seen by the main I²C master | `0x54` |
+| `ACTUAL_ADDR` | The true hardware address of the device | `0x60` |
+
+During an address match (`0x54`), the module replaces those bits with `0x60` before sending them to the target device.
+
+---
+
+## 🔬 Simulation Details
+
+- **Simulator:** Icarus Verilog (via [EDA Playground](https://edaplayground.com/))  
+- **Testbench:** `tb_i2c_addr_translator.v`  
+- **Waveform File:** `i2c_wave.vcd`  
+- **How to View:** Open EPWave after simulation to view SDA/SCL transitions.  
+
+**Observed Behavior:**  
+- Start/Stop correctly detected.  
+- Shift register captures 7 address bits.  
+- Address translation verified at bit level.  
+- Data passed transparently between master and device.
+
+---
+
+## 💡 Design Challenges Faced
+
+- **I²C Timing Emulation:** Real I²C lines are open-drain and rely on pull-ups. Simulating that behavior in Verilog required simplified logic.  
+- **Start/Stop Detection:** Needed to be done carefully to avoid false triggers during bit changes.  
+- **FSM Synchronization:** Ensuring correct state transitions under asynchronous I²C edges while keeping design synchronous to FPGA clock.  
+- **Vivado Compatibility:** Converted SystemVerilog constructs to Verilog (no `logic`, `typedef enum`).
+
+---
+
+
+## 🧾 Deliverables Checklist
+
+| Deliverable | Status |
+|--------------|:------:|
+| Verilog module (`i2c_addr_translator.v`) | ✅ |
+| Testbench (`tb_i2c_addr_translator.v`) | ✅ |
+| Simulation (EDA Playground link) | ✅ |
+| Resource report (Vivado) | ✅ |
+| Documentation (`README.md`) | ✅ |
+
+---
+
+## 🔗 Useful Links
+
+- [EDA Playground – Public Simulation](https://edaplayground.com/)
+- [I²C Bus Specification by NXP](https://www.nxp.com/docs/en/user-guide/UM10204.pdf)
+
+---
+
+**End of Document**
+
 
